@@ -271,26 +271,26 @@ for cex in cur.get("exercises", []):
     if not prev_strs:
         delta = "🆕"
         new_ex += 1
-        action_items.append(f"- [ ] {ex_name}: gerakan baru, jaga konsistensi dulu — kalo {cur_str} clean semua, naik beban next sesi")
+        action_items.append(f"- [ ] {ex_name}: new movement, build consistency first — once {cur_str} is clean across the board, add weight next session")
     elif is_bw:
         if cur_reps > prev_reps:
             delta = "+🔥"; up += 1
-            action_items.append(f"- [ ] {ex_name}: reps naik ({cur_reps} vs {prev_reps}) — pertahankan, dorong 1-2 reps lagi")
+            action_items.append(f"- [ ] {ex_name}: reps up ({cur_reps} vs {prev_reps}) — keep it up, push 1-2 more reps")
         elif cur_reps < prev_reps:
             delta = "-⬇"; down += 1
-            action_items.append(f"- [ ] {ex_name}: reps turun ({cur_reps} vs {prev_reps}) — cek fatigue/recovery, target balik ke {prev_strs[0]}")
+            action_items.append(f"- [ ] {ex_name}: reps down ({cur_reps} vs {prev_reps}) — check fatigue/recovery, target returning to {prev_strs[0]}")
         else:
             delta = "="; flat += 1
-            action_items.append(f"- [ ] {ex_name}: reps stagnan di {cur_reps} — coba tambah 1-2 reps atau naikkan beban tambahan")
+            action_items.append(f"- [ ] {ex_name}: reps flat at {cur_reps} — try adding 1-2 reps or extra weight")
     elif cur_vol > prev_vol * 1.02:
         delta = "+🔥"; up += 1
-        action_items.append(f"- [ ] {ex_name}: volume naik ({cur_vol:,} vs {int(prev_vol):,} kg) — pertahankan, dorong 1-2 reps lagi kalo masih ada sisa")
+        action_items.append(f"- [ ] {ex_name}: volume up ({cur_vol:,} vs {int(prev_vol):,} kg) — keep it up, push 1-2 more reps if there's anything left")
     elif cur_vol < prev_vol * 0.98:
         delta = "-⬇"; down += 1
-        action_items.append(f"- [ ] {ex_name}: volume turun ({cur_vol:,} vs {int(prev_vol):,} kg) — cek fatigue/beban, target balik ke {prev_strs[0]}")
+        action_items.append(f"- [ ] {ex_name}: volume down ({cur_vol:,} vs {int(prev_vol):,} kg) — check fatigue/load, target returning to {prev_strs[0]}")
     else:
         delta = "="; flat += 1
-        action_items.append(f"- [ ] {ex_name}: stagnan di {cur_str} — coba naik beban atau tambah 1-2 reps buat progressive overload")
+        action_items.append(f"- [ ] {ex_name}: flat at {cur_str} — try adding weight or 1-2 more reps for progressive overload")
 
     rows.append({
         "delta": delta, "name": ex_name, "cur": cur_str, "prev": prev_strs[:2],
@@ -310,9 +310,9 @@ for r in rows:
 
 lines.append("")
 if is_custom:
-    lines.append("### Analisis Sesi")
+    lines.append("### Session Analysis")
     if not rows:
-        lines.append("- Ga ada exercise yang bisa dianalisis (semua warmup/empty).")
+        lines.append("- No analyzable exercises (all warmup/empty).")
     else:
         cov = Counter(r["group"] for r in rows)
         cov_txt = ", ".join(f"{g} {n} set" + ("s" if n != 1 else "") for g, n in cov.most_common())
@@ -321,21 +321,21 @@ if is_custom:
         for r in rows:
             name = r["name"]; cur = r["cur"]
             if r["delta"] == "🆕":
-                lines.append(f"- 🆕 **{name}**: {cur} — gerakan baru, belum ada baseline")
+                lines.append(f"- 🆕 **{name}**: {cur} — new movement, no baseline yet")
             elif r["is_bw"]:
                 if r["reps"] > r["prev_reps"]:
-                    lines.append(f"- **{name}**: {cur} — reps naik ({r['reps']} vs {r['prev_reps']})")
+                    lines.append(f"- **{name}**: {cur} — reps up ({r['reps']} vs {r['prev_reps']})")
                 elif r["reps"] < r["prev_reps"]:
-                    lines.append(f"- **{name}**: {cur} — reps turun ({r['reps']} vs {r['prev_reps']})")
+                    lines.append(f"- **{name}**: {cur} — reps down ({r['reps']} vs {r['prev_reps']})")
                 else:
-                    lines.append(f"- **{name}**: {cur} — stabil ({r['reps']} reps)")
+                    lines.append(f"- **{name}**: {cur} — stable ({r['reps']} reps)")
             else:
                 if r["prev_vol"] is None:
-                    lines.append(f"- **{name}**: {cur} — belum ada baseline volume")
+                    lines.append(f"- **{name}**: {cur} — no baseline volume yet")
                 else:
                     pct = (r["vol"] - r["prev_vol"]) / r["prev_vol"] * 100
                     arrow = "+" if pct >= 0 else ""
-                    trend = "naik" if pct > 2 else ("turun" if pct < -2 else "stabil")
+                    trend = "up" if pct > 2 else ("down" if pct < -2 else "stable")
                     lines.append(f"- **{name}**: {cur} — volume {trend} ({arrow}{pct:.0f}% vs prev {r['prev'][0]})")
         lines.append("")
         total_vol = int(w.get("total_volume_kg") or 0)
@@ -343,13 +343,13 @@ if is_custom:
         up_count = sum(1 for r in rows if r["delta"] == "+🔥")
         down_count = sum(1 for r in rows if r["delta"] == "-⬇")
         obs_parts = []
-        if up_count: obs_parts.append(f"{up_count} naik")
-        if down_count: obs_parts.append(f"{down_count} turun")
-        if new_count: obs_parts.append(f"{new_count} baru")
-        obs_txt = ", ".join(obs_parts) if obs_parts else "semua stabil"
+        if up_count: obs_parts.append(f"{up_count} up")
+        if down_count: obs_parts.append(f"{down_count} down")
+        if new_count: obs_parts.append(f"{new_count} new")
+        obs_txt = ", ".join(obs_parts) if obs_parts else "all stable"
         lines.append(f"**Session:** {w['total_sets']} sets | {w['total_reps']} reps | {total_vol:,} kg | {w['duration_minutes']} min ({obs_txt})")
         lines.append("")
-        lines.append("Catatan: workout custom (bukan routine template), jadi ga ada target progression spesifik. Fokus: konsistensi gerakan + effort RIR 1-2.")
+        lines.append("Note: custom workout (not a routine template), so there's no specific progression target. Focus: movement consistency + RIR 1-2 effort.")
 else:
     lines.append("### Action Items")
     lines.extend(action_items)
@@ -357,22 +357,22 @@ else:
 
 # Dynamic coach verdict — honest, based on actual deltas
 parts = []
-if up: parts.append(f"{up} naik")
-if down: parts.append(f"{down} turun")
-if flat: parts.append(f"{flat} stagnan")
-if new_ex: parts.append(f"{new_ex} baru")
-summary = ", ".join(parts) if parts else "semua sama"
+if up: parts.append(f"{up} up")
+if down: parts.append(f"{down} down")
+if flat: parts.append(f"{flat} flat")
+if new_ex: parts.append(f"{new_ex} new")
+summary = ", ".join(parts) if parts else "all same"
 
 if up > 0 and down == 0 and flat == 0:
-    verdict = f"> Sesi bagus — semua exercise naik ({summary}). Jaga momentum, langsung naikin beban yang udah clean biar ga cuma once-off."
+    verdict = f"> Great session — every exercise up ({summary}). Keep the momentum, add weight to the ones that were clean so it's not a one-off."
 elif down > 0 and up == 0 and flat == 0:
-    verdict = f"> Semua turun ({summary}). Ini jarang soal strength loss — lebih sering fatigue atau recovery kurang. Jangan panik, cek tidur & makan, balik normal next sesi."
+    verdict = f"> Everything down ({summary}). This is rarely strength loss — more often fatigue or poor recovery. Don't panic, check sleep & food, back to normal next session."
 elif up > down:
-    verdict = f"> Mixed tapi dominan naik ({summary}). Progress ada, tapi ada yg turun — cek exercise yg -⬇ di atas, kemungkinan fatigue spillover dari exercise sebelumnya."
+    verdict = f"> Mixed but mostly up ({summary}). Progress is there, but something dipped — check the -⬇ exercises above, likely fatigue spillover from a previous exercise."
 elif down > up:
-    verdict = f"> Mixed tapi dominan turun ({summary}). Kemungkinan fatigue atau beban naik di exercise pertama nyedot energi buat sisanya. Turunin ekspektasi set awal kalo perlu."
+    verdict = f"> Mixed but mostly down ({summary}). Likely fatigue, or added weight on an early exercise sapped energy for the rest. Lower expectations on early sets if needed."
 else:
-    verdict = f"> Mostly stagnan ({summary}). Stimulus udah adaptasi — ini saatnya progressive overload: naik beban atau tambah reps di exercise yg flat."
+    verdict = f"> Mostly flat ({summary}). The stimulus has adapted — time for progressive overload: add weight or reps on the flat exercises."
 
 lines.append(verdict)
 output = "\n".join(lines)

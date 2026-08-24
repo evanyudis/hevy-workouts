@@ -247,7 +247,7 @@ new exercises show 🆕.
 
 - Delta column first (leftmost) — visible without scroll on narrow Telegram
 - **Bold current session values**
-- Delta: `+🔥` (naik), `-⬇` (turun), `=` (flat), `🆕` (no prior history)
+- Delta: `+🔥` (up), `-⬇` (down), `=` (flat), `🆕` (no prior history)
 - Show weight and total reps (e.g. 20×24 = 20kg × 24 total reps across working sets)
 - Prev columns are PER-EXERCISE: `sets (date)` of that exercise's 2 most recent prior sessions, from any routine
 
