@@ -1,0 +1,12 @@
+# Config — NEVER commit real API keys
+config.json
+
+# Runtime state files
+hevy_pending.json
+hevy_last_workout.txt
+hevy_routines.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/

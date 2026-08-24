@@ -1,0 +1,19 @@
+{
+  "hevy_api_key": "",
+  "telegram": {
+    "bot_token": "",
+    "channel_id": "",
+    "thread_id": null
+  },
+  "paths": {
+    "pending_file": "hevy_pending.json",
+    "last_workout_file": "hevy_last_workout.txt",
+    "routines_file": "hevy_routines.json"
+  },
+  "coach": {
+    "enabled": true,
+    "poll_interval_minutes": 15,
+    "trigger_command": ""
+  },
+  "timezone": "Asia/Jakarta"
+}
