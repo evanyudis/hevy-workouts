@@ -172,17 +172,20 @@ if [[ "$HARNESS" == "hermes" ]]; then
         echo -e "${c_yellow}[dry-run]${c_reset} hermes cron run <analyze_id> (set as trigger_command)"
     else
         # Detect job — polls every 15 min, silent exit, zero LLM tokens
+        # --script must be RELATIVE to $HERMES_HOME/scripts/ (absolute paths rejected)
+        REL_SCRIPT="hevy-coach/hevy-coach-detect.py"
         DETECT_OUTPUT="$(hermes cron create "*/15 * * * *" \
             --name "Hevy Coach Detect" \
             --no-agent \
-            --script "$TARGET_DIR/hevy-coach-detect.py" 2>&1 || true)"
+            --script "$REL_SCRIPT" 2>&1 || true)"
         echo "$DETECT_OUTPUT" | grep -E "created|ID|id:" >&2 || true
         ANALYZE_ID=""
         # Analyze job — never naturally fires (leap-day schedule); detect triggers it
+        REL_ANALYZE="hevy-coach/hevy-coach-analyze.py"
         ANALYZE_OUTPUT="$(hermes cron create "0 0 29 2 *" \
             --name "Hevy Coach Analyze" \
             --no-agent \
-            --script "$TARGET_DIR/hevy-coach-analyze.py" 2>&1 || true)"
+            --script "$REL_ANALYZE" 2>&1 || true)"
         echo "$ANALYZE_OUTPUT" | grep -E "created|ID|id:" >&2 || true
 
         # Extract analyze job ID from output to build the trigger command
