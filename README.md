@@ -51,6 +51,43 @@ The installer:
 You need **Hevy Pro** and an API key from
 **https://hevy.com/settings?developer**.
 
+### Install via your AI agent
+
+Want your agent (Hermes, OpenClaw, Claude Code, Codex, etc.) to install and set
+this up for you? Paste this prompt into it:
+
+```text
+Install the Hevy Workouts repo for me. This turns my Hevy gym data into an
+automated AI coach (skill + scripts).
+
+STEPS:
+1. Clone it:
+   git clone https://github.com/evanyudis/hevy-workouts.git
+2. Read the README.md, SKILL.md, and references/hevy-api.md first.
+3. Figure out what harness I'm running (Hermes Agent = `hermes` binary,
+   OpenClaw = `openclaw`/`claw` binary). Run ./install.sh --harness <auto|hermes|openclaw>.
+4. It will prompt for my Hevy API key (I'll paste it — it's at
+   https://hevy.com/settings?developer, requires Hevy Pro). If I also want
+   Telegram delivery, I'll provide bot token + channel ID. Otherwise skip.
+5. After install, verify it works:
+   - Run the detect script once:  python3 <install_dir>/hevy-coach-detect.py
+   - Confirm it polls the Hevy API without errors.
+   - On Hermes: confirm the two cron jobs were registered
+     (`hermes cron list`) and the trigger_command is set in config.json.
+
+Then use the installed skill whenever I ask about my workouts: "analyze my
+workout", "compare my bench press", "what did I lift last week", "how's my
+split", etc. Pull data live from the Hevy API — don't guess.
+
+IMPORTANT: All personal config (API key, routines, exercise templates, delivery
+channel) comes from config.json / env vars — never hardcode anything. The
+scripts are harness-agnostic and adapt to whatever routines I have in Hevy.
+```
+
+Note: the Hevy API is available only to **Hevy Pro** subscribers. Get your key
+at **https://hevy.com/settings?developer**. On OpenClaw / non-Hermes harnesses,
+the cron scheduling is manual — see `references/hevy-api.md`.
+
 ## Configuration
 
 `config.json` is written by the installer. Env-var fallbacks exist for power
